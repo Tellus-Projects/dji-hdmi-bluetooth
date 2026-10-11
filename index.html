@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1220">
+  <meta name="description" content="Régler un boîtier DJI-HDMI (lunettes DJI Goggles 3 vers HDMI) par Bluetooth, sans se connecter à son Wi-Fi.">
+  <title>DJI-HDMI Bluetooth</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="top">
+    <img src="icon.svg" alt="" width="34" height="34">
+    <div class="brand"><strong>DJI-HDMI</strong><span>Bluetooth</span></div>
+    <span class="pill" id="pill" data-tone=""><span class="dot"></span><span id="pill-text">Déconnecté</span></span>
+  </header>
+
+  <main id="main">
+    <!-- No Web Bluetooth -->
+    <section class="card" id="unsupported" hidden>
+      <h2>Bluetooth indisponible dans ce navigateur</h2>
+      <p>Ouvrez cette page avec <strong>Chrome</strong> ou <strong>Edge</strong> sur Android, Windows, macOS ou Linux.</p>
+      <p class="hint">Sur iPhone et iPad, Safari ne gère pas le Bluetooth web : installez le navigateur gratuit <strong>Bluefy</strong> et ouvrez-y cette adresse.</p>
+    </section>
+
+    <!-- Step 1: choose a Pi -->
+    <section class="card" id="connect-card">
+      <h2>Se connecter à un boîtier</h2>
+      <p>Allumez le Raspberry Pi, restez à quelques mètres, puis choisissez-le dans la liste (son nom est celui de son Wi-Fi, par exemple <em>DJI-HDMI-7F3A</em>).</p>
+      <button class="btn btn-primary btn-wide" type="button" id="connect-btn">Rechercher un boîtier</button>
+      <p class="hint">La première fois, le téléphone demande d'appairer le boîtier : acceptez. La liaison est chiffrée.</p>
+      <p class="error" id="connect-error" hidden></p>
+    </section>
+
+    <!-- Step 2: password -->
+    <form class="card" id="auth-card" hidden>
+      <h2>Mot de passe</h2>
+      <p>Le mot de passe du <strong>Wi-Fi du boîtier</strong> : il est affiché sur l'écran d'attente et noté dans le fichier <em>djihdmi-identifiants.txt</em> de la carte SD.</p>
+      <div class="field">
+        <label for="password">Mot de passe du Wi-Fi</label>
+        <div class="input-group">
+          <input type="password" id="password" autocomplete="current-password" required>
+          <button type="button" class="icon-btn" data-reveal="password" aria-label="Afficher le mot de passe">👁</button>
+        </div>
+      </div>
+      <label class="check"><input type="checkbox" id="remember" checked> Se souvenir sur cet appareil</label>
+      <button class="btn btn-primary btn-wide" type="submit" id="auth-btn">Valider</button>
+      <p class="error" id="auth-error" hidden></p>
+    </form>
+
+    <!-- Step 3: the box -->
+    <div id="panel" hidden>
+      <section class="card">
+        <div class="card-head">
+          <h2 id="pi-name">Boîtier</h2>
+          <button class="btn btn-ghost btn-small" type="button" id="refresh-btn">Actualiser</button>
+        </div>
+        <dl class="facts">
+          <div><dt>Lunettes</dt><dd id="f-video">—</dd></div>
+          <div><dt>Images/s</dt><dd id="f-fps">—</dd></div>
+          <div><dt>Enregistrement</dt><dd id="f-rec">—</dd></div>
+          <div><dt>Internet</dt><dd id="f-net">—</dd></div>
+          <div><dt>Version</dt><dd id="f-version">—</dd></div>
+          <div><dt>Heure du boîtier</dt><dd id="f-clock">—</dd></div>
+        </dl>
+        <p class="hint" id="pi-links"></p>
+      </section>
+
+      <section class="card">
+        <h2>Enregistrement</h2>
+        <p id="rec-text" class="muted">—</p>
+        <button class="btn btn-record btn-wide" type="button" id="rec-btn">Enregistrer</button>
+      </section>
+
+      <form class="card" id="wifi-form">
+        <h2>Wi-Fi du boîtier</h2>
+        <p class="hint">Après l'enregistrement, le boîtier redémarre son Wi-Fi avec ces réglages : reconnectez-vous ensuite au nouveau réseau.</p>
+        <div class="field">
+          <label for="ssid">Nom du réseau</label>
+          <input type="text" id="ssid" maxlength="32" required autocomplete="off" spellcheck="false">
+        </div>
+        <div class="field">
+          <label for="wifi-password">Mot de passe (8 à 63 caractères)</label>
+          <div class="input-group">
+            <input type="password" id="wifi-password" minlength="8" maxlength="63" required autocomplete="new-password">
+            <button type="button" class="icon-btn" data-reveal="wifi-password" aria-label="Afficher le mot de passe">👁</button>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-wide" type="submit">Enregistrer le Wi-Fi</button>
+      </form>
+
+      <form class="card" id="name-form">
+        <h2>Nom de l'appareil</h2>
+        <div class="field">
+          <label for="device-name">Nom (lettres minuscules, chiffres, tirets)</label>
+          <input type="text" id="device-name" maxlength="63" required autocomplete="off" spellcheck="false" autocapitalize="none">
+        </div>
+        <button class="btn btn-primary btn-wide" type="submit">Enregistrer le nom</button>
+      </form>
+
+      <section class="card">
+        <h2>Boîtier</h2>
+        <div class="actions">
+          <button class="btn btn-secondary" type="button" id="clock-btn">Mettre le boîtier à l'heure</button>
+          <button class="btn btn-secondary" type="button" id="video-btn">Redémarrer la vidéo</button>
+          <button class="btn btn-secondary" type="button" id="reboot-btn">Redémarrer</button>
+          <button class="btn btn-danger" type="button" id="poweroff-btn">Éteindre</button>
+        </div>
+        <button class="btn btn-ghost btn-wide" type="button" id="disconnect-btn">Se déconnecter</button>
+      </section>
+    </div>
+  </main>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+  <footer class="foot">DJI-HDMI · <a href="https://github.com/wllm-rbnt/third-eye" rel="noopener">third-eye</a> · by Tellus75</footer>
+</body>
+</html>

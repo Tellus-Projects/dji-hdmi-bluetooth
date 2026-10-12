@@ -94,7 +94,7 @@
   }
 
   // ------------------------------------------------------------------- UI --
-  const state = { link: null, status: null, config: null, timer: 0 };
+  const state = { link: null, status: null, config: null, options: null, timer: 0 };
 
   function setPill(tone, text) {
     $("pill").dataset.tone = tone;
@@ -222,8 +222,14 @@
     $("rec-btn").textContent = recording ? "Arrêter l'enregistrement" : "Enregistrer";
     $("rec-btn").classList.toggle("is-on", recording);
     $("rec-btn").disabled = !recording && !storage;
+    // The place is chosen before recording: changing it would cut the file.
+    $("rec-storage").disabled = recording;
+    $("rec-storage-hint").textContent = recording
+      ? "Arrêtez l'enregistrement pour changer de support."
+      : "Sur la carte SD, 2 Go restent toujours libres pour le système.";
     const cfg = state.config;
     if (cfg) {
+      fillStorages(cfg.recording.storage);
       if (document.activeElement !== $("ssid")) $("ssid").value = cfg.network.ssid;
       if (document.activeElement !== $("wifi-password")) $("wifi-password").value = cfg.network.password;
       if (document.activeElement !== $("device-name")) $("device-name").value = cfg.device.name;
@@ -231,10 +237,24 @@
     }
   }
 
+  /* Where recordings go: the box's own choices (USB stick, SD card…). */
+  function fillStorages(current) {
+    const select = $("rec-storage");
+    const choices = Object.entries((state.options || {}).recording_storages || {});
+    if (select.options.length !== choices.length) {
+      select.replaceChildren(...choices.map(([value, text]) => new Option(text, value)));
+    }
+    if (document.activeElement !== select) select.value = current;
+  }
+
   async function refresh() {
     if (!state.link) return;
     state.status = await api("GET", "/api/status");
-    if (!state.config) state.config = (await api("GET", "/api/config")).config;
+    if (!state.config) {
+      const answer = await api("GET", "/api/config");
+      state.config = answer.config;
+      state.options = answer.options;
+    }
     render();
   }
 
@@ -271,6 +291,17 @@
     const on = rec.state === "recording" || rec.state === "waiting";
     act(e.currentTarget, () => api("POST", "/api/recording", { action: on ? "stop" : "start" }),
       on ? "Enregistrement arrêté." : "Enregistrement démarré.");
+  });
+  $("rec-storage").addEventListener("change", (e) => {
+    const select = e.currentTarget;
+    act(select, async () => {
+      try {
+        state.config = (await api("PUT", "/api/config/recording", { storage: select.value })).config;
+      } finally {
+        select.blur();
+        render();                           // shows the saved choice again
+      }
+    }, "Support d'enregistrement enregistré.");
   });
   $("wifi-form").addEventListener("submit", (event) => {
     event.preventDefault();

@@ -1,23 +1,24 @@
 /* DJI-HDMI Bluetooth: same look as the box's settings page. */
 :root {
-  --bg: #0b1220;
-  --bg-card: #121a2b;
-  --bg-elev: #182235;
-  --border: #243049;
-  --text: #f1f5f9;
-  --muted: #94a3b8;
-  --accent: #2dd4bf;
-  --ok: #34d399;
+  --bg: #0c0c0d;
+  --bg-card: #18181b;
+  --bg-elev: #232327;
+  --border: #34343a;
+  --text: #f4f4f5;
+  --muted: #a1a1aa;
+  --accent: #f04848;
+  --accent-ink: #160404;
+  --ok: #4ade80;
   --warn: #fbbf24;
-  --danger: #f87171;
+  --danger: #fb7185;
   --radius: 16px;
   color-scheme: dark;
 }
 @media (prefers-color-scheme: light) {
   :root {
-    --bg: #f1f5f9; --bg-card: #ffffff; --bg-elev: #f8fafc; --border: #dbe3ee;
-    --text: #0f172a; --muted: #5b6b80; --accent: #0d9488; --ok: #059669;
-    --warn: #b45309; --danger: #dc2626; color-scheme: light;
+    --bg: #f4f4f5; --bg-card: #ffffff; --bg-elev: #ececef; --border: #d9d9de;
+    --text: #18181b; --muted: #5c5c66; --accent: #c81e24; --accent-ink: #ffffff;
+    --ok: #15803d; --warn: #b45309; --danger: #be123c; color-scheme: light;
   }
 }
 * { box-sizing: border-box; }
@@ -83,7 +84,7 @@ select:disabled { opacity: .6; }
 .btn:disabled { opacity: .5; cursor: default; }
 .btn-wide { width: 100%; }
 .btn-small { min-height: 36px; padding: 6px 12px; font-size: .88rem; }
-.btn-primary { background: var(--accent); color: #04221f; }
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
 .btn-secondary { background: var(--bg-elev); border-color: var(--border); color: var(--text); }
 .btn-ghost { background: transparent; border-color: var(--border); color: var(--text); }
 .btn-danger { background: color-mix(in srgb, var(--danger) 18%, transparent); color: var(--danger); border-color: color-mix(in srgb, var(--danger) 45%, transparent); }

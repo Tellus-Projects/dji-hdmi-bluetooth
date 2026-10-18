@@ -1,7 +1,6 @@
 # DJI-HDMI Bluetooth
 
-Page de réglage par Bluetooth des boîtiers DJI-HDMI (Raspberry Pi qui affiche
-la vidéo des DJI Goggles 3 en HDMI).
+Page de réglage par Bluetooth des boîtiers DJI-HDMI.
 
 **Ouvrir la page : https://tellus75.github.io/dji-hdmi-bluetooth/**
 

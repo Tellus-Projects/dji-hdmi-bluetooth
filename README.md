@@ -2,7 +2,7 @@
 
 Page de réglage par Bluetooth des boîtiers DJI-HDMI.
 
-**Ouvrir la page : https://tellus75.github.io/dji-hdmi-bluetooth/**
+**Ouvrir la page : https://tellus-projects.github.io/dji-hdmi-bluetooth/**
 
 Aide et nouvelles versions sur le **Discord** : https://discord.gg/bQ5uAtU7Gb
 

@@ -222,6 +222,7 @@
     $("rec-btn").textContent = recording ? "Arrêter l'enregistrement" : "Enregistrer";
     $("rec-btn").classList.toggle("is-on", recording);
     $("rec-btn").disabled = !recording && !storage;
+    $("photo-btn").disabled = !storage || (rec.photo || {}).available === false || (rec.photo || {}).busy === true;
     // The place is chosen before recording: changing it would cut the file.
     $("rec-storage").disabled = recording;
     $("rec-storage-hint").textContent = recording
@@ -291,6 +292,9 @@
     const on = rec.state === "recording" || rec.state === "waiting";
     act(e.currentTarget, () => api("POST", "/api/recording", { action: on ? "stop" : "start" }),
       on ? "Enregistrement arrêté." : "Enregistrement démarré.");
+  });
+  $("photo-btn").addEventListener("click", (e) => {
+    act(e.currentTarget, () => api("POST", "/api/photo"), "Photo demandée.");
   });
   $("rec-storage").addEventListener("change", (e) => {
     const select = e.currentTarget;

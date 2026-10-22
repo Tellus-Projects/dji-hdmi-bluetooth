@@ -2,7 +2,7 @@
  * field, the phone often has none). Cache first, refreshed when online. */
 "use strict";
 
-const CACHE = "djihdmi-bluetooth-v4";
+const CACHE = "djihdmi-bluetooth-v5";
 const FILES = ["./", "index.html", "app.js", "style.css", "icon.svg",
   "manifest.webmanifest"];
 

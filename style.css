@@ -89,6 +89,7 @@ select:disabled { opacity: .6; }
 .btn-ghost { background: transparent; border-color: var(--border); color: var(--text); }
 .btn-danger { background: color-mix(in srgb, var(--danger) 18%, transparent); color: var(--danger); border-color: color-mix(in srgb, var(--danger) 45%, transparent); }
 .btn-record { background: color-mix(in srgb, var(--danger) 85%, #000); color: #fff; }
+.btn-wide + .btn-wide { margin-top: 10px; }
 .btn-record.is-on { background: var(--bg-elev); color: var(--danger); border-color: var(--danger); }
 .icon-btn {
   width: 46px; min-height: 46px; border-radius: 10px; border: 1px solid var(--border);

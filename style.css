@@ -63,6 +63,9 @@ main { max-width: 560px; margin: 0 auto; padding: 16px; display: grid; gap: 14px
 .facts dt { color: var(--muted); font-size: .78rem; }
 .facts dd { margin: 0; font-weight: 650; overflow-wrap: anywhere; }
 
+.alerts { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.alerts li { border-left: 4px solid var(--warn); background: var(--bg-elev); border-radius: 8px; padding: 8px 10px; font-size: .9rem; font-weight: 600; }
+
 .field { display: grid; gap: 6px; }
 label { font-weight: 600; font-size: .92rem; }
 input[type="text"], input[type="password"], select {

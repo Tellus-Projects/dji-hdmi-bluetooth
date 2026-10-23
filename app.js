@@ -201,6 +201,27 @@
   // ---------------------------------------------------------------- panel --
   const fmtFps = (v) => (v || v === 0 ? Number(v).toFixed(0) : "—");
 
+  /* The warnings of the box (same as the icons on its HDMI picture). */
+  const ALERT_TEXT = {
+    power: "Alimentation trop faible : branchez une alimentation 5,1 V / 3 A sur le GPIO.",
+    heat: "Le Pi est trop chaud : mettez-le à l'air, avec un dissipateur ou un ventilateur.",
+    space: "Presque plus de place pour l'enregistrement : videz la clé ou la carte, ou activez l'enregistrement en boucle.",
+  };
+
+  function renderHealth(sys, names) {
+    $("f-temp").textContent = typeof sys.temperature === "number" ? `${sys.temperature.toFixed(1).replace(".", ",")} °C` : "—";
+    const th = sys.throttled;
+    $("f-power").textContent = !th ? "—" : th.under_voltage_now ? "trop faible" : th.under_voltage_seen ? "ok (baisse passée)" : "ok";
+    const list = $("health-alerts");
+    const items = names.filter((n) => ALERT_TEXT[n]).map((n) => {
+      const li = document.createElement("li");
+      li.textContent = `⚠ ${ALERT_TEXT[n]}`;
+      return li;
+    });
+    list.replaceChildren(...items);
+    list.hidden = !items.length;
+  }
+
   function render() {
     const s = state.status || {};
     const usb = s.usb || {};
@@ -212,6 +233,7 @@
     const recording = rec.state === "recording" || rec.state === "waiting";
     $("f-rec").textContent = recording ? "en cours" : rec.available === false ? "indisponible" : "arrêté";
     $("f-net").textContent = net ? `oui (${net.kind})` : "non";
+    renderHealth(s.system || {}, Array.isArray(display.alerts) ? display.alerts : []);
     $("f-version").textContent = s.version || "—";
     $("f-clock").textContent = s.time ? new Date(s.time * 1000).toLocaleString("fr-FR") : "—";
     const storage = rec.storage;
